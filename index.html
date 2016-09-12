@@ -47,6 +47,8 @@
         width: 400px;
         margin: 0 auto;
         position: relative;
+        display: flex;
+        flex-direction: column;
       }
 
       .add-input {
@@ -72,33 +74,41 @@
       .add-input:active {
       }
       .add-input::-webkit-input-placeholder {
-        color: #fff;
-        opacity: 0.3;
+        color: #ffb2c3;
+        /*color: #f397ab;*/
+        /*color: #ff7d99;*/
       }
 
       .add-button {
         /*display: none;*/
         position: absolute;
-        top: 7px;
-        right: 10px;
-        height: 20px;
-        width: 20px;
+        top: 4px;
+        right: 4px;
+        height: 28px;
+        width: 28px;
         background: transparent;
         font-size: 16px;
+        line-height: 15px;
         color: #fff;
         border: none;
         outline: none;
         cursor: pointer;
-        opacity: 0.5;
+        opacity: 0.3;
+      }
+      .add-input:focus + .add-button {
+        opacity: 1;
       }
       .add-button:hover {
         opacity: 1;
+        background: #ff7492;
       }
       .add-button:focus {
         opacity: 1;
+        background: #ff7492;
       }
       .add-button:active {
         opacity: 1;
+        transform: scale(0.95);
       }
 
       .list {
@@ -106,17 +116,19 @@
         color: #fff;
         border-radius: 0 0 2px 2px;
         list-style: none;
-        padding: 16px 0;
+        padding: 10px 0 18px 0;
+        display: flex;
+        flex-direction: column;
       }
       .list-item {
-        
+        display: flex;
+        flex-direction: row;
       }
-      .list-item.status2 {
-        opacity: 0.3;
-      }
+
+
       .item-strike {
         display: inline-block;
-        margin: 8px 2px 8px 20px;
+        margin: 8px 5px 8px 20px;
         height: 18px;
         line-height: 17px;
         width: 18px;
@@ -126,12 +138,11 @@
         border-radius: 50%;
         color: rgba(255,255,255,0);
         cursor: pointer;
-      }
-      .list-item.status2 .item-strike {
-        color: rgba(255,255,255,1);
+        flex: 0 0 auto;
+        transition: color 0.1s;
       }
       .item-strike:hover {
-        color: rgba(255,255,255,0.5);
+        color: rgba(255,255,255,1);
       }
       .item-strike:active {
       }
@@ -140,9 +151,11 @@
         border-radius: 2px;
         padding: 10px 10px 10px 7px;
         cursor: pointer;
+        flex: 1 1 auto;
+        transition: background-color 0.2s;
       }
       .item-edit:hover {
-        background: #ff7492;
+        background: #f37791;
         opacity: 0.9;
       }
       .item-edit:focus {
@@ -153,16 +166,23 @@
       .item-edit:active {
       }
       .item-delete {
-        float: right;
         display: inline-block;
-        padding: 5px;
-        margin: 5px;
-        opacity: 0.2;
+        padding: 0 10px;
+        opacity: 0;
         cursor: pointer;
+        flex: 0 0 auto;
+        line-height: 28px;
+        margin: 2px 5px;
+        height: 30px;
+        transition: background-color 0.2s;
+      }
+      .list-item:hover .item-delete{
+        opacity: 1;
       }
       .item-delete:hover {
-        color: white;
+        color: #fff;
         opacity: 1;
+        background: #da385b;
       }
 
       .system-message {
@@ -177,6 +197,41 @@
         color: #111;
         transition: color 0s;
       }
+
+      /* ——— DONE ——— */
+
+      .status2 {
+        position: relative;
+        margin-top: 22px;
+      }
+      .status2 .item-edit {
+        opacity: 0.3;
+        text-decoration: line-through;
+      }
+      .status2::before {
+        content: "";
+        position: absolute;
+        border-top: solid 1px #ff7d99;
+        top: -12px;
+        left: 0px;
+        font-size: 11px;
+        width: 100%;
+        text-align: center;
+      }
+      .list > .status2 ~ .status2 {
+        margin-top: 0;
+      }
+      .list > .status2 ~ .status2::before {
+        content: "";
+        border: none;
+      }
+      .list-item.status2 .item-strike {
+        color: rgba(255,255,255,1);
+        border-color: rgba(255,255,255,0);
+        font-size: 13px;
+      }
+
+
     </style>
     <script>
 
@@ -307,6 +362,7 @@
         var addInput = document.getElementById('js-add-input');
         addButton.addEventListener('click', addTodo); 
         addInput.focus();
+        console.log('focused on add input');
 
         addInput.onkeydown = function(e){
           if (e.keyCode === 40) { // arrow down
@@ -401,7 +457,34 @@
 
                 if (event.keyCode == 8) { // cmd + backspace?
                   // console.log('a');
-                  strikeTodo(this);
+                  var thisItem = this;
+
+                  var thisItemId = "edit-" + thisItem.parentNode.getAttribute('data-id');
+                  var nextItem = document.getElementById(thisItemId).parentNode.nextSibling;
+                  var prevItem = document.getElementById(thisItemId).parentNode.previousSibling;
+
+                  strikeTodo(thisItem);
+
+                  console.log(nextItem);
+                  console.log(prevItem);
+
+                  if (nextItem != null) {
+                    document.getElementById("edit-" + nextItem.getAttribute('data-id')).focus();
+                  }
+                  
+                  // nextItem.getAttribute('data-id').focus();
+                  console.log(thisItemId);
+
+
+                  // var nextItemId = thisItem.parentNode.nextSibling;
+                  // .querySelector(".js-edit")
+                  // console.log(nextItemId);
+                  // var prevItemId = "edit-" + this.parentNode.previousElement.getAttribute('data-id');
+
+                  // var focusOnThisBitch = "edit-" + this.parentNode.getAttribute('data-id');
+                  // document.getElementById(focusOnThisBitch).focus();
+                  
+                  // console.log(this);
                   // console.log('b');
                   return false;
                 }
@@ -429,8 +512,8 @@
 
               } else { // all other keys
                 
-                editTodoItem(this, this.parentNode);
-                saveTodoList();
+                editTodoItem(this, this.parentNode); // save content to memory 
+                saveTodoList(); 
 
               }
             } 
