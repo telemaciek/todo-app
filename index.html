@@ -109,6 +109,7 @@
         padding: 16px 0;
       }
       .list-item {
+        
       }
       .list-item.status2 {
         opacity: 0.3;
@@ -349,9 +350,9 @@
 
 
 
-      function strikeTodo() {
-        var id = this.parentNode.getAttribute('data-id');
-        // console.log('Strike?')
+      function strikeTodo(strikeButton) {
+        console.log('Striking!')
+        var id = strikeButton.parentNode.getAttribute('data-id');
         // console.log('Status: ' + todoList[id].status);
         if (todoList[id].status === 1) {
           todoList[id].status = 2;  
@@ -366,7 +367,11 @@
       function bindStrikeButtons() {
         var strikeButtons = document.getElementsByClassName('js-strike')
         for (var i=0; i < strikeButtons.length; i++) {
-            strikeButtons[i].addEventListener('click', strikeTodo);
+            console.log('binding');
+            strikeButtons[i].addEventListener('click', function(){
+              var strikeButton = this;
+              strikeTodo(strikeButton)
+            });
         };
       }
 
@@ -395,17 +400,9 @@
                 }
 
                 if (event.keyCode == 8) { // cmd + backspace?
-
-                  var id = this.parentNode.getAttribute('data-id'); // Delete, this is code duplication. Change to strikeTodo() with params
-
-                  if (todoList[id].status === 1) {
-                    todoList[id].status = 2;  
-                  } else {
-                    todoList[id].status = 1;  
-                  }
-                  saveTodoList();
-                  drawTodoList(); 
-
+                  // console.log('a');
+                  strikeTodo(this);
+                  // console.log('b');
                   return false;
                 }
 
@@ -510,7 +507,7 @@
 
 
       // INFO:
-      // • Your todo's are saved on your computer, in your browser. They won't be visible in other browsers. They are not backed up on the server.
+      // • Your todo's are saved on your computer, in your browser. They won't be visible in other browsers. They are NOT backed up on the server.
 
     </script>
   </body>
