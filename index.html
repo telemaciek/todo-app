@@ -205,8 +205,12 @@
         margin-top: 22px;
       }
       .status2 .item-edit {
-        opacity: 0.3;
+        /*opacity: 0.3;*/
+        color: #f7a2b4;
         text-decoration: line-through;
+      }
+      .status2 .item-edit:focus {
+        color: #ffd8e0;
       }
       .status2::before {
         content: "";
@@ -240,6 +244,7 @@
 
 
       function loadTodoList() {
+        var todoList = {}; // define a variable called todo list
         // console.log('Initiating load...');
         var todoStorage = localStorage.getItem('todoStorage'); // get the list data from local storage
         if (todoStorage != null) { // if it exists
@@ -253,6 +258,8 @@
           } )
           // console.log('You must be new. List doesnt exist in local storage')
         }
+
+        return todoList;
         // console.log('Finished loading list.')
       }
 
@@ -261,8 +268,8 @@
 
 
 
-      function saveTodoList() {
-        // console.log('Saving...')
+      function saveTodoList(todoList) {
+        console.log('Saving...')
         localStorage.setItem('todoStorage', JSON.stringify(todoList)); // stringify and save todolist as todostorage
         var saveDate = new Date();
         var saveHour = saveDate.getHours();
@@ -270,7 +277,7 @@
         var saveSecond = saveDate.getSeconds();
         var saveMessage = "Last saved at " + saveHour + ":" + saveMinute + ":" + saveSecond;
         document.getElementById('js-system-message').innerHTML = saveMessage;
-        // console.log('Done.')
+        console.log('Done.')
       }
 
 
@@ -279,6 +286,7 @@
       function addTodo() {
         var addInput = document.getElementById('js-add-input');
         var value = addInput.value;
+        var todoList = loadTodoList();
         // console.log("Input value: " + value);
         
         id = Date.now()
@@ -295,7 +303,7 @@
             // 2 = done
           }
           // console.log('New item added to todoList with id ' + id)
-          saveTodoList();
+          saveTodoList(todoList);
           // console.log('Redrawing list...')
           drawTodoList()
           // console.log('Done.')
@@ -316,6 +324,7 @@
 
       function drawTodoList() {
         // console.log('Generating list...')
+        var todoList = loadTodoList();
         var todoListHTML = '';
 
         function addListToHTML(status) {
@@ -380,6 +389,7 @@
 
 
       function deleteTodo() {
+        var todoList = loadTodoList();
         // Remove from list 
         // console.log('Deleting...')
         var id = this.parentNode.getAttribute('data-id');
@@ -390,7 +400,7 @@
         delete todoList[id];
         // console.log('Deleted')
         // console.log(todoList[id]);
-        saveTodoList();
+        saveTodoList(todoList);
         drawTodoList();
       }
       function bindDeleteButtons() {
@@ -407,6 +417,7 @@
 
 
       function strikeTodo(strikeButton) {
+        var todoList = loadTodoList();
         console.log('Striking!')
         var id = strikeButton.parentNode.getAttribute('data-id');
         // console.log('Status: ' + todoList[id].status);
@@ -417,7 +428,7 @@
         }
         // console.log('New Status: ' + todoList[id].status);
 
-        saveTodoList();
+        saveTodoList(todoList);
         drawTodoList();
       }
       function bindStrikeButtons() {
@@ -438,6 +449,7 @@
 
 
       function bindEditContainers() {
+        var todoList = loadTodoList();
         
         var editContainers = document.getElementsByClassName('js-edit');
 
@@ -512,8 +524,8 @@
 
               } else { // all other keys
                 
-                editTodoItem(this, this.parentNode); // save content to memory 
-                saveTodoList(); 
+                editTodoItem(this, this.parentNode, todoList); // save content to memory 
+                saveTodoList(todoList); 
 
               }
             } 
@@ -521,7 +533,8 @@
         };
       };
       
-      function editTodoItem(editableElement, editableElementParent) {
+      function editTodoItem(editableElement, editableElementParent, todoList) {
+        var todoList = todoList;
         // console.log('editing' + editableElement);
         var id = editableElementParent.getAttribute('data-id');
         var value = editableElement.innerHTML;
@@ -558,7 +571,7 @@
         document.onkeydown = function(e) {
           if (event.metaKey) { // when you hold down command...
             if (event.keyCode == 83) {
-              saveTodoList();
+              // saveTodoList();
               flashSystemMessage();
               return false;
             }
@@ -579,7 +592,6 @@
 
 
       
-      var todoList = {}; // define a variable called todo list
       loadTodoList(); // retrieve data from local storage
       drawTodoList(); // draw list in html
 
