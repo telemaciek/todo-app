@@ -188,7 +188,7 @@
       .system-message {
         color: #ccc;
         font-size: 11px;
-        position: absolute;
+        position: fixed;
         right: 10px;
         bottom: 10px;
         transition: color 2s;
@@ -197,6 +197,7 @@
         color: #111;
         transition: color 0s;
       }
+
 
       /* ——— DONE ——— */
 
@@ -236,6 +237,9 @@
       }
 
 
+      .hide {
+        display: none;
+      }
     </style>
     <script>
 
@@ -262,6 +266,7 @@
         return todoList;
         // console.log('Finished loading list.')
       }
+
 
 
 
@@ -320,38 +325,38 @@
 
 
 
-
-
-      function drawTodoList() {
-        // console.log('Generating list...')
+      function addListToHTML(todoListHTML, status) {
         var todoList = loadTodoList();
-        var todoListHTML = '';
-
-        function addListToHTML(status) {
-          for (key in todoList) {
-            todoItem = todoList[key];
-            if (todoItem.status === status) {
-              todoListHTML += 
-                '<li class="list-item js-item status'
-                + 
-                todoItem.status 
-                +
-                '" data-id="' 
-                +
-                todoItem.id
-                +
-                '"><span class="js-strike item-strike">✔</span> <span contenteditable="true" class="js-edit item-edit" id="edit-'
-                +
-                todoItem.id
-                +
-                '">';
-              todoListHTML += todoItem.value;
-              todoListHTML += '</span><span class="js-delete item-delete">×</span></li>';
-            }
+        for (key in todoList) {
+          todoItem = todoList[key];
+          if (todoItem.status === status) {
+            todoListHTML += 
+              '<li class="list-item js-item status'
+              +   
+              todoItem.status 
+              +
+              '" data-id="' 
+              +
+              todoItem.id
+              +
+              '"><span class="js-strike item-strike">✔</span> <span contenteditable="true" class="js-edit item-edit" id="edit-'
+              +
+              todoItem.id
+              +
+              '">';
+            todoListHTML += todoItem.value;
+            todoListHTML += '</span><span class="js-delete item-delete">×</span></li>';
           }
         }
-        addListToHTML(1);
-        addListToHTML(2);
+        return todoListHTML;
+      }
+
+      function drawTodoList() {
+        // console.log('Drawing list...')
+        var todoListHTML = '';
+
+        todoListHTML = addListToHTML(todoListHTML, 1);
+        todoListHTML = addListToHTML(todoListHTML, 2);
 
         document.getElementById('js-list').innerHTML = todoListHTML;
 
@@ -554,6 +559,7 @@
           drawTodoList();
         }
       };
+
       function moveDownList(editableElement, editableElementParent) {
         // console.log('DOWN');
         if (editableElementParent != document.getElementById("js-list").lastChild) {
@@ -571,7 +577,9 @@
         document.onkeydown = function(e) {
           if (event.metaKey) { // when you hold down command...
             if (event.keyCode == 83) {
-              // saveTodoList();
+              var todoList = loadTodoList();
+              saveTodoList(todoList); // It's probably saved already, but let's make sure. Kinda fake. :)
+              console.log('This, for the moment, is just to point you to the actual last save and make you feel kind–of safe.')
               flashSystemMessage();
               return false;
             }
@@ -587,6 +595,8 @@
           systemMessageContainer.className = "system-message";
         }, 1000);
       }
+
+
 
 
 
