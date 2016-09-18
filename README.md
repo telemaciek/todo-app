@@ -1,8 +1,8 @@
 # todo-app
 
 - keyboard control
-- saved for offline localStorage
+- constantly saving in localStorage
 - toggle visibility of Done items
 - rad color
 
-Important: your todo's are saved in your browser using localStorage.They won't be visible in other browsers. They are NOT backed up on the server.  
+Important: your todo's are constantly being saved in your browser using localStorage. They won't be visible in other browsers. It works offline, but your data is NOT backed up anywhere.  
